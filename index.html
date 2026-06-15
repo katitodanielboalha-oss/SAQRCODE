@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfica - Envio via WhatsApp</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    
+    <style>
+
+        * {
+            margin: 0; 
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f9f6f0; /* fundo clássico e quente */
+            color: #418dc0;
+            line-height: 1.6;
+        }
+
+        /* NAVBAR ELEGANTE */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 3rem;
+            z-index: 1000;
+            border-bottom: 2px solid #c0392b; /* detalhe vermelho */
+        }
+
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar .logo img {
+            height: 48px;
+            width: auto;
+            border-radius: 4px;
+        }
+
+        .navbar .logo span {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2d2d2d;
+            letter-spacing: 1px;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .navbar .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            color: #3d3d3d;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .navbar .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #c0392b;
+            transition: width 0.3s ease;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #c0392b;
+        }
+
+        .navbar .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* CARROSSEL PUBLICITÁRIO */
+        .carousel-container {
+            margin-top: 90px; /* altura do navbar */
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            background: #09ad61;
+        }
+
+        .carousel-slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .carousel-slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(17, 211, 104, 0.384);
+        }
+
+        .carousel-slide .slide-content {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            max-width: 700px;
+        }
+
+        .carousel-slide .slide-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .carousel-slide .slide-content p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            border: none;
+            font-size: 2rem;
+            padding: 0.8rem 1.3rem;
+            cursor: pointer;
+            border-radius: 50%;
+            backdrop-filter: blur(4px);
+            transition: 0.3s;
+            z-index: 5;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(192, 57, 43, 0.7);
+        }
+
+        .carousel-btn.prev {
+            left: 20px;
+        }
+        .carousel-btn.next {
+            right: 20px;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 14px;
+            z-index: 5;
+        }
+
+        .carousel-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .carousel-dots span.active {
+            background: #c0392b;
+            transform: scale(1.3);
+            box-shadow: 0 0 10px #c0392b;
+        }
+
+        /* SEÇÃO DE BOAS-VINDAS E BOTÕES */
+        .welcome-section {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .welcome-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: #2d2d2d;
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .welcome-section h1::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #c0392b, #f1c40f, #27ae60);
+            margin: 1rem auto 0;
+            border-radius: 4px;
+        }
+
+        .welcome-section .subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #5a5a5a;
+            margin-top: 0.8rem;
+            letter-spacing: 0.3px;
+        }
+
+        .welcome-section .subtitle i {
+            color: #c0392b;
+            margin: 0 6px;
+        }
+
+        /* BOTÕES ELEGANTES */
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .btn-elegant {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 2.8rem;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-elegant::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.15);
+            transition: left 0.4s;
+        }
+
+        .btn-elegant:hover::before {
+            left: 100%;
+        }
+
+        .btn-enviar {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: #fff;
+            border: 2px solid #c0392b;
+        }
+
+        .btn-enviar:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 14px 30px rgba(192, 57, 43, 0.3);
+            background: linear-gradient(135deg, #a93226, #c0392b);
+        }
+
+        .btn-site {
+            background: transparent;
+            color: #2d2d2d;
+            border: 2px solid #2d2d2d;
+            box-shadow: none;
+        }
+
+        .btn-site:hover {
+            background: #2d2d2d;
+            color: #f9f6f0;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+        }
+
+        .btn-elegant i {
+            font-size: 1.4rem;
+        }
+
+        .btn-enviar .lock-icon {
+            font-size: 0.9rem;
+            margin-left: 4px;
+            opacity: 0.8;
+        }
+
+        /* SEÇÃO DE SEGURANÇA (pequeno selo) */
+        .security-badge {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .security-badge i {
+            color: #27ae60;
+            margin-right: 4px;
+        }
+
+        /* RODAPÉ */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.9rem;
+            color: #888;
+            border-top: 1px solid #e0dcd5;
+            margin-top: 2rem;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.6rem 1.2rem;
+                flex-direction: column;
+                gap: 0.4rem;
+            }
+            .navbar .nav-links {
+                gap: 1.5rem;
+            }
+            .carousel-container {
+                height: 280px;
+                margin-top: 110px;
+            }
+            .carousel-slide .slide-content h2 {
+                font-size: 1.8rem;
+            }
+            .welcome-section h1 {
+                font-size: 2.2rem;
+            }
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn-elegant {
+                width: 80%;
+                justify-content: center;
+                padding: 1rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar .logo span {
+                font-size: 1.2rem;
+            }
+            .carousel-container {
+                height: 220px;
+            }
+        }
+        /* CORES DE CONEXÃO (vermelho, amarelo, verde) usadas em detalhes */
+        .accent-red { color: #c0392b; }
+        .accent-yellow { color: #f1c40f; }
+        .accent-green { color: #27ae60; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR ELEGANTE -->
+    <nav class="navbar">
+        <div class="logo">
+            <!-- Espaço para logo da gráfica (substitua src pelo caminho real) -->
+            <img src="/IMAGENS/Simbolo-100.jpg" alt="Logo">
+            <span>Gráfica Rápida</span>
+        </div>
+    
+    </nav>
+
+    <!-- CARROSSEL PUBLICITÁRIO -->
+    <div class="carousel-container">
+        <div class="carousel-slides" id="carouselSlides">
+            <div class="carousel-slide" style="background-image: linear-gradient(135deg, #1a1a2e, #16213e), url('https://via.placeholder.com/1600x600?text=Impressão+Digital');">
+                <div class="slide-content">
+                    <h2>Impressão de Alta Qualidade</h2>
+                    <p>Transforme seus projetos em realidade com nossa tecnologia de ponta.</p>
+                </div>
+            </div>
+            <div class="carousel-slide" style="background-image: linear-gradient(135deg, #2c3e50, #1a252f), url('https://via.placeholder.com/1600x600?text=Papelaria+Personalizada');">
+                <div class="slide-content">
+                    <h2>Papelaria & Personalizados</h2>
+                    <p>Convites, cartões e muito mais com acabamento premium.</p>
+                </div>
+            </div>
+            <div class="carousel-slide" style="background-image: linear-gradient(135deg, #4a2c2a, #1a0e0d), url('https://via.placeholder.com/1600x600?text=Envio+via+WhatsApp');">
+                <div class="slide-content">
+                    <h2>Envio Rápido via WhatsApp</h2>
+                    <p>Compartilhe seus arquivos diretamente pelo QR Code e receba orçamento.</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-btn prev" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-btn next" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+        <div class="carousel-dots" id="carouselDots">
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- SEÇÃO DE BOAS-VINDAS E BOTÕES -->
+    <section class="welcome-section">
+        <h1>Seja bem-vindo ao nosso sistema de atendimento online!</h1>
+        <p class="subtitle">
+            <i class="fas fa-check-circle accent-green"></i> 
+            Envie seus projetos com segurança e agilidade 
+            <i class="fas fa-check-circle accent-green"></i>
+        </p>
+        <p class="subtitle" style="font-size:1rem; margin-top:0.4rem;">
+            <i class="fas fa-shield-alt accent-red"></i> Conexão criptografada &middot; 
+            <i class="fas fa-qrcode accent-yellow"></i> Acesse via QR Code
+        </p>
+
+        <!-- BOTÕES CENTRAIS ELEGANTES -->
+        <div class="buttons-container">
+            <!-- Botão Enviar Projetos - abre WhatsApp com mensagem pré-definida -->
+            <a href="https://wa.me/972296251?text=Olá!%20Gostaria%20de%20enviar%20um%20projeto%20para%20impressão." 
+               target="_blank" rel="noopener noreferrer" class="btn-elegant btn-enviar">
+                <i class="fab fa-whatsapp"></i> Enviar Projetos
+                <i class="fas fa-lock lock-icon"></i>
+            </a>
+            <!-- Botão Visite o Nosso Site -->
+            <a href="https://katitodanielboalha-oss.github.io/GraficaRapida/" target="_blank" rel="noopener noreferrer" class="btn-elegant btn-site">
+                <i class="fas fa-globe"></i> Visite o Nosso Site
+            </a>
+        </div>
+
+        <!-- Selo de segurança -->
+        <div class="security-badge">
+            <span><i class="fas fa-lock accent-green"></i> Segurança SSL</span>
+            <span><i class="fas fa-qrcode accent-yellow"></i> QR Code único</span>
+            <span><i class="fas fa-check-circle accent-green"></i> Conexão verificada</span>
+        </div>
+    </section>
+
+    <!-- RODAPÉ -->
+    <footer>
+        <p>&copy; 2025 Gráfica Rápida — Todos os direitos reservados.</p>
+        <p style="margin-top:0.3rem; font-size:0.8rem;">
+            <i class="fab fa-whatsapp accent-green"></i> Envio seguro via WhatsApp 
+            <i class="fas fa-circle" style="color:#c0392b; font-size:0.5rem; margin:0 6px;"></i>
+            <i class="fas fa-circle" style="color:#f1c40f; font-size:0.5rem; margin:0 6px;"></i>
+            <i class="fas fa-circle" style="color:#27ae60; font-size:0.5rem; margin:0 6px;"></i>
+        </p>
+    </footer>
+
+    
+    
+    <!-- Script do carrossel -->
+    <script>
+        (function() {
+            const slides = document.querySelector('#carouselSlides');
+            const dots = document.querySelectorAll('#carouselDots span');
+            const prevBtn = document.querySelector('#prevBtn');
+            const nextBtn = document.querySelector('#nextBtn');
+            let currentIndex = 0;
+            const totalSlides = document.querySelectorAll('.carousel-slide').length;
+
+            function goToSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                currentIndex = index;
+                slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+
+            function nextSlide() {
+                goToSlide(currentIndex + 1);
+            }
+
+            function prevSlide() {
+                goToSlide(currentIndex - 1);
+            }
+
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+
+            dots.forEach((dot, i) => {
+                dot.addEventListener('click', () => goToSlide(i));
+            });
+
+            // Auto-play suave
+            let interval = setInterval(nextSlide, 5000);
+            const carouselContainer = document.querySelector('.carousel-container');
+            carouselContainer.addEventListener('mouseenter', () => clearInterval(interval));
+            carouselContainer.addEventListener('mouseleave', () => {
+                interval = setInterval(nextSlide, 5000);
+            });
+
+            // Inicializar
+            goToSlide(0);
+        })();
+    </script>
+
+    <!-- QR Code - a página é projetada para ser lida via QR. 
+         Instrução: o print shop pode gerar um QR code apontando para esta URL. -->
+</body>
+</html>
